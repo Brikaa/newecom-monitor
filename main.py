@@ -26,6 +26,7 @@ if __name__ == '__main__':
                 'username': secrets.STUDENT_ID,
                 'password': secrets.STUDENT_PASSWORD
             })
+            print(authentication_res.text)
             authentication_json = authentication_res.json()
 
             if 'AuthenticationException' in authentication_json:
