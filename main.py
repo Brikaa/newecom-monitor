@@ -54,5 +54,8 @@ if __name__ == '__main__':
             print('Timeout Error')
         except requests.exceptions.ConnectionError:
             print('Connection error')
+        except Exception as error:
+            print("Unknown error")
+            print(error)
         i += 1
         time.sleep(secrets.INTERVAL)
