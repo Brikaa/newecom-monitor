@@ -13,7 +13,7 @@ REGISTRATION_DATA = [
 
 def post_to_webhook():
     requests.post(secrets.WEBHOOK_URL, json={
-        'content': '@everyone registration has started'
+        'content': secrets.MESSAGE
     })
 
 
@@ -55,4 +55,4 @@ if __name__ == '__main__':
         except requests.exceptions.ConnectionError:
             print('Connection error')
         i += 1
-        time.sleep(15)
+        time.sleep(secrets.INTERVAL)
