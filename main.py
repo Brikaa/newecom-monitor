@@ -1,6 +1,6 @@
 import time
 import requests
-import secrets
+import os
 
 REGISTRATION_DATA = [
     'maxElectiveHours',
@@ -12,7 +12,7 @@ REGISTRATION_DATA = [
 
 
 def post_to_webhook():
-    requests.post(secrets.WEBHOOK_URL, json={
+    requests.post(os.environ['WEBHOOK_URL'], json={
         'content': '@everyone registration has started'
     })
 
@@ -23,8 +23,8 @@ if __name__ == '__main__':
         print(f'Trial #{i}')
         try:
             authentication_res = requests.post('http://newecom.fci-cu.edu.eg/api/authenticate', json={
-                'username': secrets.STUDENT_ID,
-                'password': secrets.STUDENT_PASSWORD
+                'username': os.environ['STUDENT_ID'],
+                'password': os.environ['STUDENT_PASSWORD']
             })
             authentication_json = authentication_res.json()
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
             registration_res = requests.get(
                 f'http://newecom.fci-cu.edu.eg/api/student-courses-eligible',
                 params={
-                    'studentId': secrets.STUDENT_ID
+                    'studentId': os.environ['STUDENT_ID']
                 },
                 headers={
                     'Authorization': f'Bearer {auth_token}'
