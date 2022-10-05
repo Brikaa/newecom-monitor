@@ -50,9 +50,9 @@ if __name__ == '__main__':
                 post_to_webhook()
                 break
             print('Registration has not started')
-        except TimeoutError:
+        except requests.exceptions.Timeout:
             print('Timeout Error')
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
             print('Connection error')
         i += 1
         time.sleep(15)
