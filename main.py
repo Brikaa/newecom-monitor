@@ -18,23 +18,26 @@ def post_to_webhook():
 
 
 if __name__ == '__main__':
-    i = 0
+    auth_token = None
+    no_trials = 0
+    total_time_since_reset = 0
     while True:
-        print(f'Trial #{i}')
+        print(f'Trial #{no_trials}')
         try:
-            authentication_res = requests.post('http://newecom.fci-cu.edu.eg/api/authenticate', json={
-                'username': secrets.STUDENT_ID,
-                'password': secrets.STUDENT_PASSWORD
-            })
-            print(authentication_res.text)
-            authentication_json = authentication_res.json()
+            if auth_token is None or total_time_since_reset >= secrets.RESET_TOKEN_INTERVAL:
+                # Refresh auth_token
+                total_time_since_reset = 0
+                authentication_res = requests.post('http://newecom.fci-cu.edu.eg/api/authenticate', json={
+                    'username': secrets.STUDENT_ID,
+                    'password': secrets.STUDENT_PASSWORD
+                })
+                print(authentication_res.text)
+                authentication_json = authentication_res.json()
+                if 'AuthenticationException' in authentication_json:
+                    print('Authentication error')
+                    break
+                auth_token = authentication_res.json()['id_token']
 
-            if 'AuthenticationException' in authentication_json:
-                print('Authentication error')
-                print(authentication_json)
-                break
-
-            auth_token = authentication_res.json()['id_token']
             registration_res = requests.get(
                 f'http://newecom.fci-cu.edu.eg/api/student-courses-eligible',
                 params={
@@ -58,5 +61,7 @@ if __name__ == '__main__':
         except Exception as error:
             print("Unknown error")
             print(error)
-        i += 1
+
+        no_trials += 1
+        total_time_since_reset += secrets.INTERVAL
         time.sleep(secrets.INTERVAL)
