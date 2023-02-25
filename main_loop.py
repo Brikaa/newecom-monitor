@@ -1,17 +1,10 @@
 import time
 import requests
 import secrets
-
-REGISTRATION_DATA = [
-    'maxElectiveHours',
-    'maxMandatoryHours',
-    'maxRegisteredHoursPerTerm',
-    'minRegisteredHoursPerTerm',
-    'pendingCourses'
-]
+from typing import Callable
 
 
-if __name__ == '__main__':
+def main_loop(change_checker: Callable[[str], bool]):
     auth_token = None
     no_trials = 0
     total_time_since_reset = 0
@@ -28,25 +21,13 @@ if __name__ == '__main__':
                 authentication_json = authentication_res.json()
                 if 'AuthenticationException' in authentication_json:
                     print('Authentication error')
-                    break
+                    sys.exit(1)
                 auth_token = authentication_res.json()['id_token']
                 print("Refreshed auth token")
 
-            registration_res = requests.get(
-                f'http://newecom.fci-cu.edu.eg/api/student-courses-eligible',
-                params={
-                    'studentId': secrets.STUDENT_ID
-                },
-                headers={
-                    'Authorization': f'Bearer {auth_token}'
-                }
-            )
-            registration_json = registration_res.json()
-            print(registration_json)
-            if any(registration_json[i] is not None for i in REGISTRATION_DATA):
-                print('Registration has started')
+            if change_checker(auth_token):
                 break
-            print('Registration has not started')
+
         except requests.exceptions.Timeout:
             print('Timeout Error')
         except requests.exceptions.ConnectionError:
