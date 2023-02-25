@@ -26,9 +26,7 @@ def has_registration_restarted(auth_token):
     if registered_courses_count is None:
         registered_courses_count = len(registered_courses)
         return False
-    if len(registered_courses) != registered_courses_count:
-        return True
-    return False
+    return len(registered_courses) != registered_courses_count
 
 
 if __name__ == '__main__':
