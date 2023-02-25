@@ -2,18 +2,19 @@ import time
 import requests
 import secrets
 from typing import Callable
+from datetime import datetime
 
 
 def main_loop(change_checker: Callable[[str], bool]):
     auth_token = None
     no_trials = 0
-    total_time_since_reset = 0
+    time_since_last_reset = datetime.now()
     while True:
         print(f'Trial #{no_trials}')
         try:
-            if auth_token is None or total_time_since_reset >= secrets.RESET_TOKEN_INTERVAL:
+            if auth_token is None or (datetime.now() - time_since_last_reset).seconds >= secrets.RESET_TOKEN_INTERVAL:
                 # Refresh auth_token
-                total_time_since_reset = 0
+                time_since_last_reset = datetime.now()
                 authentication_res = requests.post('http://newecom.fci-cu.edu.eg/api/authenticate', json={
                     'username': secrets.STUDENT_ID,
                     'password': secrets.STUDENT_PASSWORD
@@ -38,5 +39,4 @@ def main_loop(change_checker: Callable[[str], bool]):
             time.sleep(secrets.INTERVAL)
 
         no_trials += 1
-        total_time_since_reset += secrets.INTERVAL
         time.sleep(secrets.INTERVAL)
