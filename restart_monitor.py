@@ -6,18 +6,8 @@ from main_loop import main_loop
 registered_courses_count = None
 
 
-def has_registration_restarted(auth_token):
+def has_registration_restarted(registration_json):
     global registered_courses_count
-    registration_res = requests.get(
-        f'http://newecom.fci-cu.edu.eg/api/student-courses-eligible',
-        params={
-            'studentId': secrets.STUDENT_ID
-        },
-        headers={
-            'Authorization': f'Bearer {auth_token}'
-        }
-    )
-    registration_json = registration_res.json()
     if 'registeredCourses' not in registration_json:
         print('No registered courses')
         return True

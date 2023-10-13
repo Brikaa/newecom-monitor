@@ -12,18 +12,7 @@ REGISTRATION_DATA = [
 ]
 
 
-def has_registration_started(auth_token):
-    registration_res = requests.get(
-        f'http://newecom.fci-cu.edu.eg/api/student-courses-eligible',
-        params={
-            'studentId': secrets.STUDENT_ID
-        },
-        headers={
-            'Authorization': f'Bearer {auth_token}'
-        }
-    )
-    registration_json = registration_res.json()
-    print(registration_json)
+def has_registration_started(registration_json):
     if any(registration_json[i] is not None for i in REGISTRATION_DATA):
         print('Registration has started')
         return True
