@@ -23,7 +23,7 @@ def main_loop(change_checker: Callable[[dict], bool]):
                 if 'AuthenticationException' in authentication_json:
                     print('Authentication error')
                     sys.exit(1)
-                auth_token = authentication_res.json()['id_token']
+                auth_token = authentication_json['id_token']
                 print("Refreshed auth token")
 
             registration_res = requests.get(
