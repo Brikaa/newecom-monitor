@@ -1,5 +1,4 @@
 import requests
-import secrets
 from main_loop import main_loop
 
 
